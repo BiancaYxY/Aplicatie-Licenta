@@ -90,7 +90,7 @@ Această aplicație web este un sistem de management al resurselor umane destina
 ---
 
 ## Schema Bazei de Date (MySQL)
-![Schema bazei de date](readme\schemaBD.jpg)
+![Schema bazei de date](schemaBD.jpg)
 
 ## ⚙ Tehnologii Utilizate
 
