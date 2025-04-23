@@ -1,22 +1,26 @@
 const express = require("express");
 const app = express();
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
-//adaugat dupa
-const {db} = require("./models");
 
+const { db } = require("./models");
+
+//  Import rutele
 const apiRoutes = require("./routes");
 
 const PORT = process.env.PORT || 1234;
 
-// Middleware
+//  Middleware global
 app.use(express.json());
+//pt auth
+app.use(cookieParser());
 
-// Ruta de test
+//  Rută de test simpla
 app.get("/", (req, res) => {
-  res.send("LMA!");
+  res.send("test!");
 });
 
-// Ruta pentru resetarea bazei de date
+//  Rută opțională pentru reset DB 
 app.get("/reset-database", async (req, res) => {
   try {
     await db.sync({ force: true });
@@ -27,21 +31,21 @@ app.get("/reset-database", async (req, res) => {
   }
 });
 
-// Montare rute
+//  Montează toate rutele definite în `routes/index.js`
 app.use("/api", apiRoutes);
 
-// Start server și sincronizare DB
+//  Pornește serverul și sincronizează baza de date
 if (db) {
   db.sync()
     .then(() => {
       console.log("Database fully functional!!");
       app.listen(PORT, () => {
-        console.log(`Works on http://localhost:${PORT}`);
+        console.log(`Server running at http://localhost:${PORT}`);
       });
     })
     .catch((error) => {
-      console.error("Sync gone wrong", error);
+      console.error(" Sync gone wrong", error);
     });
 } else {
-  console.error("Database is not defined");
+  console.error(" Database is not defined");
 }
