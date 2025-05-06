@@ -8,7 +8,6 @@ router.use("/leave", require("./leaveRoutes"));
 router.use("/salary", require("./salaryRoutes"));
 router.use("/announcements", require("./annnouncementRoutes"));
 router.use("/tasks", require("./taskRoutes"));
-//managers only
 router.use("/members", require("./teamRoutes"));
 
 

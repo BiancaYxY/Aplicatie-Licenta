@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
 const { User: userModel } = require("../models");
 
 const COOKIE_AGE = parseInt(process.env.COOKIE_AGE) || 86400000; // 1 zi
@@ -12,7 +13,8 @@ const authController = {
             last_name, 
             email, 
             password, 
-            rank, 
+            rank,
+            team_lead_id,
         } = req.body;
 
       const checkUser = await userModel.findOne({ where: { email } });
@@ -22,11 +24,13 @@ const authController = {
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await userModel.create({
+        id: uuidv4(),
         first_name,
         last_name,
         email,
         password: hashedPassword,
         rank: rank || "employee",
+        team_lead_id: team_lead_id || null,
         createdAt: new Date(),
       });
 

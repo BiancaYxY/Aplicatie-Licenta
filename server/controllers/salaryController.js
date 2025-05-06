@@ -1,14 +1,14 @@
 const {Salary, User} = require("../models");
+const { v4: uuidv4 } = require("uuid");
 const PDFDocument = require("pdfkit");
-
 
 const salaryController = {
     getSalaryDetails: async(req, res) => {
         try {
             const user_id = req.user_id;
-            const salaries = Salary.findAll({
+            const salaries = await Salary.findAll({
                 where: {user_id},
-                order:[["year", "DESC"], ["month", DESC]],
+                order:[["year", "DESC"], ["month", "DESC"]],
             });
 
             res.status(200).json(salaries);
@@ -20,8 +20,9 @@ const salaryController = {
 
     downloadPayslip: async(req, res) => {
         try {
-            const user_id = req.user_id;
-            const user = findByPk(user_id);
+            const user = req.user;
+            const user_id = user.id;
+
             if(!user) {
                 return res.status(404).json({message:"User not found!"});
             }
@@ -37,7 +38,7 @@ const salaryController = {
 
             res.setHeader("Content-Type", "application/pdf");
             res.setHeader(
-                "Content Disposition",
+                "Content-Disposition",
                 `attachment; filename=payslip_${salary.month}_${salary.year}.pdf`
             );
 
@@ -46,7 +47,7 @@ const salaryController = {
             doc.fontSize(20).text('Fisa de Salariu', { align: 'center' });
             doc.moveDown();
       
-            doc.fontSize(12).text(`Nume: ${user.firstName} ${user.lastName}`);
+            doc.fontSize(12).text(`Nume: ${user.first_name} ${user.last_name}`);
             doc.text(`Email: ${user.email}`);
             doc.text(`Luna: ${salary.month}`);
             doc.text(`An: ${salary.year}`);
