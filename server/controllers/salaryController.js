@@ -63,6 +63,60 @@ const salaryController = {
         }
     },
 
+    updateSalary: async (req, res) => {
+        try {
+          const salaryId = req.params.salaryId;
+      
+          const salaryToBeUpdated = {
+            base_salary: req.body.base_salary,
+            bonus: req.body.bonus,
+            month: req.body.month,
+            year: req.body.year,
+          };
+      
+          const salary = await Salary.findByPk(salaryId);
+      
+          if (!salary) {
+            return res.status(404).json({ message: "Salary not found!" });
+          }
+      
+          await salary.update(salaryToBeUpdated);
+      
+          res.status(200).json({
+            message: "Salary updated succesfully!",
+            salary,
+          });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: "Error when updating salary!" });
+        }
+      },
+
+      setSalary: async (req, res) => {
+        try {
+          const { user_id, base_salary, bonus, month, year } = req.body;
+    
+          const existing = await Salary.findOne({ where: { user_id, month, year } });
+          if (existing) {
+            return res.status(400).json({ message: "Salary for this month already exists!" });
+          }
+    
+          const salary = await Salary.create({
+            id: uuidv4(),
+            user_id,
+            base_salary,
+            bonus,
+            month,
+            year
+          });
+    
+          res.status(201).json({ message: "Salary updated succesfully!", salary });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: "Error in adding salary!" });
+        }
+      },
+
 }
 
 module.exports = salaryController;

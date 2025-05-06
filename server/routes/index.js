@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-//  Importa și conecteaza toate rutele per modul
 router.use("/users", require("./userRoutes"));
 router.use("/auth", require("./authRoutes"));
 router.use("/feedback", require("./feedbackRoutes"));
-router.use("/leave", require("./feedbackRoutes"));
+router.use("/leave", require("./leaveRoutes"));
 router.use("/salary", require("./salaryRoutes"));
-// Ex: router.use("/auth", require("./authRoutes")); // pentru autentificare
-// Ex: router.use("/feedback", require("./feedbackRoutes")); // pentru feedback
+router.use("/announcements", require("./annnouncementRoutes"));
+router.use("/tasks", require("./taskRoutes"));
+//managers only
+router.use("/members", require("./teamRoutes"));
+
+
 
 module.exports = router;

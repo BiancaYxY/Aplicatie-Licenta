@@ -36,6 +36,10 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.ENUM("admin", "employee", "manager"),
       allowNull: false,
     },
+    team_lead_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
   });
 
   return User;
