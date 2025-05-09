@@ -1,8 +1,9 @@
+require("dotenv").config();
 const {Feedback, User} = require("../models");
-const {OpenAI} = require("openai");
-
+const { v4: uuidv4 } = require("uuid");
+const OpenAI = require("openai");
 const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const feedbackController = {
@@ -15,12 +16,14 @@ const feedbackController = {
                 coaching,
                 communication,
                 decision_making,
-                motivation
+                motivation,
+                written_feedback,
             } = req.body;
 
-            const user_id = req.user_id;
+            const user_id = req.user.id;
 
             const feedback = await Feedback.create({
+                id: uuidv4(),
                 user_id,
                 target_id,
                 feedback_for,
@@ -30,11 +33,12 @@ const feedbackController = {
                 decision_making,
                 motivation,
                 created_at: new Date(),
+                written_feedback,
             });
 
             return res.status(201).json({message:"Feedback added succesfully!", feedback});
 
-        } catch(err) {
+        } catch(error) {
             console.error(error);
             res.status(500).json({message: "Error in adding feedback!"});
         }
@@ -127,52 +131,53 @@ const feedbackController = {
 
       summarizeFeedback: async (req, res) => {
         try {
-          const managerId = req.user.id;
-    
+      
+          const managerId = req.user?.id;
+          if (!managerId) {
+            return res.status(401).json({ message: "Unauthorized" });
+          }
+      
           const feedbacks = await Feedback.findAll({
             where: {
               target_id: managerId,
               feedback_for: "manager"
             }
           });
-    
+      
           if (!feedbacks.length) {
             return res.status(404).json({ message: "No feedback found!" });
           }
-    
-          const feedbackText = feedbacks.map((fb, index) => {
+      
+          const limitedFeedbacks = feedbacks.slice(0, 5);
+      
+          const feedbackText = limitedFeedbacks.map((fb, index) => {
             return `Feedback ${index + 1}:
-            - Team Dynamics: ${fb.team_dynamics}
-            - Coaching: ${fb.coaching}
-            - Communication: ${fb.communication}
-            - Decision Making: ${fb.decision_making}
-            - Motivation: ${fb.motivation}`;
-          }).join("\n");
-    
-          const prompt = `
-    Am urmatoarele evaluari oferite unui manager de catre echipa sa. Fa o analiză profesională, evidentiind punctele tari si cele care necesită imbunatatire.
-    
-    ${feedbackText}
-    `;
-    
-          const response = await openai.chat.completions.create({
+              - Team Dynamics: ${fb.team_dynamics}
+              - Coaching: ${fb.coaching}
+              - Communication: ${fb.communication}
+              - Decision Making: ${fb.decision_making}
+              - Motivation: ${fb.motivation}
+              - Comentariu: ${fb.written_feedback || "–"}`;
+            });
+      
+          const prompt = `Analizeaza urmatoarele evaluari oferite unui manager si genereaza un rezumat clar cu punctele forte si aspectele de imbunatatit:\n\n${feedbackText}`;
+      
+          const completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [
-              {
-                role: "user",
-                content: prompt
-              }
+              { role: "system", content: "Esti un asistent care rezuma feedback-uri oferite managerilor." },
+              { role: "user", content: prompt }
             ],
             temperature: 0.5,
-            max_tokens: 300
+            max_tokens: 300,
           });
-    
-          const summary = response.choices[0].message.content;
-    
+      
+          const summary = completion.choices[0].message.content;
           res.status(200).json({ summary });
+      
         } catch (error) {
-          console.error("OpenAI error:", error);
-          res.status(500).json({ message: "Error in generating summary with openai!" });
+          console.error("OpenAI error:", error?.response?.data || error.message || error);
+          res.status(500).json({ message: "Error in generating summary with OpenAI!" });
         }
       },
 };

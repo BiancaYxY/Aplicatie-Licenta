@@ -1,4 +1,4 @@
-const { User, Task, Feedback } = require("../models");
+const { User, Task} = require("../models");
 
 const teamController = {
   getTeamMembers: async (req, res) => {
@@ -6,7 +6,10 @@ const teamController = {
       const managerId = req.user.id;
 
       const teamMembers = await User.findAll({
-        where: { team_lead_id: managerId, rank: "employee" },
+        where:{ 
+          team_lead_id: managerId,
+          rank: "employee",
+         },
         attributes: ["id", "first_name", "last_name", "email"],
         order: [["first_name", "ASC"]],
       });
@@ -38,7 +41,7 @@ const teamController = {
   
       let performance = "0%";
       if (totalTasks > 0) {
-        const performance = (completedTasks / totalTasks) * 100;
+        let performance = (completedTasks / totalTasks) * 100;
         performance = `${performance.toFixed(0)}%`;
       }
   
@@ -56,6 +59,62 @@ const teamController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error in getting employee performance!" });
+    }
+  },
+
+  getTeamPerformance: async(req, res) => {
+    try {
+      const managerId = req.user.id;
+  
+      const employees = await User.findAll({
+        where: {
+          team_lead_id: managerId,
+          rank: "employee"
+        },
+        attributes: ["id", "first_name", "last_name"]
+      });
+  
+      if (!employees.length) {
+        return res.status(404).json({ message: "No team members found!" });
+      }
+  
+      let totalPercentage = 0;
+      let countWithTasks = 0;
+      const individualStats = [];
+  
+      for (const emp of employees) {
+        const totalTasks = await Task.count({ where: { assigned_to: emp.id } });
+        const completedTasks = await Task.count({
+          where: { assigned_to: emp.id, status: "completed" }
+        });
+  
+        let percentage = 0;
+        if (totalTasks > 0) {
+          percentage = (completedTasks / totalTasks) * 100;
+          totalPercentage += percentage;
+          countWithTasks++;
+        }
+  
+        individualStats.push({
+          employee: `${emp.first_name} ${emp.last_name}`,
+          totalTasks,
+          completedTasks,
+          performance: `${percentage.toFixed(0)}%`
+        });
+      }
+  
+      const averagePerformance = countWithTasks > 0
+        ? `${(totalPercentage / countWithTasks).toFixed(0)}%`
+        : "0%";
+  
+      res.status(200).json({
+        teamSize: employees.length,
+        averageTeamPerformance: averagePerformance,
+        breakdown: individualStats
+      });
+    } catch (err) {
+      console.error("Team performance error!", err);
+      res.status(500).json({ message: "Error calculating team performance!" });
     }
   },
 };

@@ -1,4 +1,5 @@
 const { Announcement } = require("../models");
+const { v4: uuidv4 } = require("uuid");
 
 const announcementController = {
   getAnnouncements: async (req, res) => {
@@ -20,7 +21,7 @@ const announcementController = {
       const created_by = req.user.id;
 
       if (!title || !content) {
-        return res.status(400).json({ message: "Titlul și conținutul sunt obligatorii." });
+        return res.status(400).json({ message: "Title and content are mandatory!" });
       }
 
       const newAnnouncement = await Announcement.create({
@@ -31,12 +32,12 @@ const announcementController = {
       });
 
       res.status(201).json({
-        message: "Anunț creat cu succes.",
+        message: "Announcement created succesfully!",
         announcement: newAnnouncement,
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Eroare la crearea anunțului." });
+      res.status(500).json({ message: "Error in creating announcement!" });
     }
   },
 

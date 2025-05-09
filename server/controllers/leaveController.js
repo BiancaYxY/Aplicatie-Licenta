@@ -1,4 +1,5 @@
-const {Leave} = require("../models");
+const {Leave, User} = require("../models");
+const { v4: uuidv4 } = require("uuid");
 
 const leaveController = {
     requestLeave: async(req, res) => {
@@ -8,8 +9,9 @@ const leaveController = {
                 end_date
                 } = req.body;
             
-            const user_id = req.user_id;
+            const user_id = req.user.id;
             const leave = await Leave.create({
+                id: uuidv4(),
                 user_id,
                 start_date,
                 end_date,
@@ -27,7 +29,7 @@ const leaveController = {
 
     getLeaveStatus: async(req, res) => {
         try{
-            const user_id = req.user_id;
+            const user_id = req.user.id;
 
             const leaves = await Leave.findAll({
                 where: {user_id},

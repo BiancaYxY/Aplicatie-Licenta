@@ -8,7 +8,7 @@ router.use("/leave", require("./leaveRoutes"));
 router.use("/salary", require("./salaryRoutes"));
 router.use("/announcements", require("./annnouncementRoutes"));
 router.use("/tasks", require("./taskRoutes"));
-router.use("/members", require("./teamRoutes"));
+router.use("/team", require("./teamRoutes"));
 
 
 

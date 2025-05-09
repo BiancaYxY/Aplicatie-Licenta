@@ -36,6 +36,10 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    written_feedback: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
   });
 
   return Feedback;
