@@ -8,6 +8,8 @@
     "jsonwebtoken": "^9.0.2",
     "openai": "^4.97.0",
     "pdfkit": "^0.17.0",
+    "react": "^19.1.0",
+    "react-router-dom": "^7.6.0",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7",
     "uuid": "^11.1.0",
