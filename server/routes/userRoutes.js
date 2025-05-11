@@ -6,7 +6,7 @@ const authRankMiddleware = require("../middleware/authRankMiddleware");
 
 router.get("/profile/:userId", authenticateUser, userController.getUserById);
 router.put("/update/:userId", authenticateUser, userController.updateUser);
-router.put("/update-password", authenticateUser, userController.updatePassword);
-router.get("/all", authenticateUser, authRankMiddleware("admin"), userController.getAllUsers);
+router.put("/update-password", userController.updatePassword);
+router.get("/all", userController.getAllUsers);
 
 module.exports = router;

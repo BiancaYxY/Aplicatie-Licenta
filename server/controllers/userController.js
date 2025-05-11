@@ -71,12 +71,12 @@ const userController = {
     
     getAllUsers: async (req, res) => {
         try {
-          const users = await User.findAll(); // aduce tot, inclusiv parole
+          const users = await User.findAll();
       
           res.status(200).json(users);
         } catch (error) {
           console.error(error);
-          res.status(500).json({ message: "Eroare la obținerea utilizatorilor." });
+          res.status(500).json({ message: "Error getting users!" });
         }
       },
 
