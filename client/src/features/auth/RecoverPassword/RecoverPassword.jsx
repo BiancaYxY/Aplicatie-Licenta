@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import "./RecoverPassword.css";
-import resetPassword from "./recoverPasswordApi";
+import  { resetPassword } from "./recoverPasswordApi";
+import { useNavigate } from "react-router-dom";
+
 
 const RecoverPassword = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     newPassword: "",
@@ -81,6 +84,11 @@ const RecoverPassword = () => {
           />
           <button type="submit">Resetează Parola</button>
         </form>
+            <div className="recover-links">
+                <button type="button" onClick={() => navigate("/login")}>
+                Înapoi la Login
+                </button>
+            </div>
       </div>
     </div>
   );

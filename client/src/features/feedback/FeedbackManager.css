@@ -1,0 +1,69 @@
+.feedback-page {
+  padding: 30px;
+  background-color: #f4f6f9;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.feedback-page h1 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.feedback-summary,
+.nps-report,
+.individual-feedback {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.feedback-summary h2,
+.nps-report h2,
+.individual-feedback h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #0cb9c1;
+}
+
+.feedback-summary p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.nps-report ul,
+.individual-feedback ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nps-report li,
+.individual-feedback li {
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #0cb9c1;
+}
+
+.nps-report li strong,
+.individual-feedback li strong {
+  color: #222;
+}
+
+.individual-feedback li p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+hr {
+  margin-top: 10px;
+  border: none;
+  border-top: 1px solid #ddd;
+}

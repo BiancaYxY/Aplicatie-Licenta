@@ -2,6 +2,7 @@ import React from "react";
 import { createContext, useContext, useState } from "react";
 import { loginRequest } from "./Login/loginApi"; 
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -9,13 +10,28 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  // const login = async (email, password) => {
+  //   try {
+  //     const userData = await loginRequest(email, password);
+  //     setUser(userData);
+  //     navigate("/dashboard");
+  //   } catch (err) {
+  //     alert("Login esuat");
+  //   }
+  // };
   const login = async (email, password) => {
     try {
-      const userData = await loginRequest(email, password);
-      setUser(userData);
+      const response = await loginRequest(email, password);
+
+      const userInfo = response.user;
+
+      console.log("🧠 User setat în context:", userInfo);
+
+      setUser(userInfo);
       navigate("/dashboard");
     } catch (err) {
-      alert("Login esuat");
+      alert("Login eșuat");
+      console.error(err);
     }
   };
 
