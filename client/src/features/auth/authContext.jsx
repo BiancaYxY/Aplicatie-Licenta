@@ -24,9 +24,6 @@ export function AuthProvider({ children }) {
       const response = await loginRequest(email, password);
 
       const userInfo = response.user;
-
-      console.log("🧠 User setat în context:", userInfo);
-
       setUser(userInfo);
       navigate("/dashboard");
     } catch (err) {

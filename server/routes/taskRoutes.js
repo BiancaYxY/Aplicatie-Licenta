@@ -9,6 +9,6 @@ router.get("/", authenticateUser, taskController.getAssignedTasks);
 router.put("/update-status", authenticateUser, taskController.updateTaskStatus);
 router.post("/assign", authenticateUser, authRankMiddleware("manager"), taskController.assignTask);
 router.delete("/:taskId", authenticateUser, authRankMiddleware("manager"), taskController.deleteTask);
-
+router.get("/team", authenticateUser, authRankMiddleware("manager"), taskController.getTeamTasks);
 
 module.exports = router;

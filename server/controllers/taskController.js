@@ -100,6 +100,30 @@ const taskController = {
     }
   },
 
+  getTeamTasks: async (req, res) => {
+    try {
+      const managerId = req.user.id;
+
+      const teamMembers = await User.findAll({
+        where: { team_lead_id: managerId, rank: "employee" },
+        attributes: ["id"],
+      });
+
+      const teamMemberIds = teamMembers.map((member) => member.id);
+
+      const tasks = await Task.findAll({
+        where: {
+          assigned_to: teamMemberIds,
+        },
+        order: [["created_at", "DESC"]],
+      });
+
+      res.status(200).json(tasks);
+    } catch (error) {
+      console.error("Error in getTeamTasks:", error);
+      res.status(500).json({ message: "Error getting team tasks!" });
+    }
+  },
 };
 
 module.exports = taskController;

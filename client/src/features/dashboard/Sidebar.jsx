@@ -13,6 +13,13 @@ const Sidebar = () => {
     else navigate("/unauthorized");
   };
 
+  const goToTasks = () => {
+    if (!user) return;
+    if (user.rank === "employee") navigate("/tasks");
+    else if (user.rank === "manager") navigate("/manager/tasks");
+    else navigate("/unauthorized");
+  };
+
   return (
     <div className="sidebar">
       <Link to="/dashboard">
@@ -22,7 +29,7 @@ const Sidebar = () => {
         <li><Link to="/dashboard">Dashboard</Link></li>
         <li><Link to="/profile">Profil</Link></li>
         <li><button className="sidebar-link" onClick={goToFeedback}>Feedback</button></li>
-        <li><Link to="#">Rapoarte</Link></li>
+        <li><button className="sidebar-link" onClick={goToTasks}>Taskuri</button></li>
         <li><Link to="#">Setări</Link></li>
       </ul>
     </div>

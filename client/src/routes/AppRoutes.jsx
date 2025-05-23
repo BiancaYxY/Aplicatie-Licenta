@@ -10,6 +10,8 @@ import Profile from "../features/profile/Profile";
 import FeedbackEmployee from "../features/feedback/FeedbackEmployee";
 import RoleRoute from "./RoleRoute";
 import FeedbackManager from "../features/feedback/FeedbackManager";
+import TaskEmployee from "../features/task/TaskEmployee";
+import TaskManager from "../features/task/TaskManager";
 
 function AppRoutes() {
   return (
@@ -27,9 +29,19 @@ function AppRoutes() {
             <FeedbackEmployee />
           </RoleRoute>
         }/>
-      <Route path="/manager/feedback" element={
+        <Route path="/manager/feedback" element={
           <RoleRoute allowedRoles={["manager"]}>
             <FeedbackManager />
+          </RoleRoute>
+        }/>
+        <Route path="/tasks" element={
+          <RoleRoute allowedRoles={["employee"]}>
+            <TaskEmployee />
+        </RoleRoute>
+        }/>
+        <Route path="/manager/tasks" element={
+          <RoleRoute allowedRoles={["manager"]}>
+            <TaskManager />
           </RoleRoute>
         }/>
 
