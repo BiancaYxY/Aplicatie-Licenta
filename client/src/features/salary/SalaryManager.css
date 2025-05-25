@@ -1,0 +1,50 @@
+.salary-manager-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.salary-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.salary-message {
+  text-align: center;
+  color: green;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.salary-form {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.salary-form input,
+.salary-form select,
+.salary-form button {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.salary-form button {
+  background-color: #14b8a6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.salary-form button:hover {
+  background-color: #0d9488;
+}

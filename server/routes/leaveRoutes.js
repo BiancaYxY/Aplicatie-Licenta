@@ -7,5 +7,7 @@ const authRankMiddleware = require("../middleware/authRankMiddleware");
 router.post("/request", authenticateUser, leaveController.requestLeave);
 router.get("/status", authenticateUser, leaveController.getLeaveStatus);
 router.put("/set-status", authenticateUser, authRankMiddleware("manager"), leaveController.setLeaveStatus);
+router.get("/", authenticateUser, authRankMiddleware("manager"), leaveController.getTeamLeaves);
+
 
 module.exports = router;

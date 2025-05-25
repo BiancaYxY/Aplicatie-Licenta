@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useAuth } from "../auth/authContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import Sidebar from "../dashboard/Sidebar";
+import Navbar from "../dashboard/Navbar";
+import "./AdminCreateUser.css";
 
 const AdminCreateUser = () => {
-  const { user } = useContext(useAuth);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     rank: "employee",
@@ -28,8 +31,12 @@ const AdminCreateUser = () => {
   useEffect(() => {
     const fetchManagers = async () => {
       try {
-        const res = await axios.get("/api/users?role=manager");
-        setManagers(res.data);
+        const res = await fetch("/api/users/all", {
+          credentials: "include",
+        });
+        const data = await res.json();
+        const onlyManagers = data.filter(u => u.rank === "manager");
+        setManagers(onlyManagers);
       } catch (err) {
         console.error("Error loading managers!", err);
       }
@@ -47,13 +54,19 @@ const AdminCreateUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await axios.post("/api/auth/register", formData);
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error("Eroare la creare utilizator");
       setSuccess("Utilizator creat cu succes!");
       setError("");
       setFormData({
-        name: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         rank: "employee",
@@ -66,57 +79,72 @@ const AdminCreateUser = () => {
   };
 
   return (
-    <div className="admin-create-user">
-      <h2>Creare utilizator (Admin)</h2>
-      {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Nume complet"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Parolă"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+    <div className="dashboard-layout">
+      <Sidebar />
+      <div className="main-section">
+        <Navbar />
+        <div className="admin-user-container">
+          <h2 className="admin-title">Creare utilizator</h2>
+          {error && <p className="error-message">{error}</p>}
+          {success && <p className="success-message">{success}</p>}
 
-        <select name="rank" value={formData.rank} onChange={handleChange}>
-          <option value="employee">Angajat</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
-        </select>
+          <form className="create-user-form" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="first_name"
+              placeholder="Prenume"
+              value={formData.first_name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Nume"
+              value={formData.last_name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Parolă"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
 
-        <select
-          name="team_lead_id"
-          value={formData.team_lead_id}
-          onChange={handleChange}
-        >
-          <option value="">Fără team leader</option>
-          {managers.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name}
-            </option>
-          ))}
-        </select>
+            <select name="rank" value={formData.rank} onChange={handleChange}>
+              <option value="employee">Angajat</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
 
-        <button type="submit">Creează utilizator</button>
-      </form>
+            <select
+              name="team_lead_id"
+              value={formData.team_lead_id}
+              onChange={handleChange}
+            >
+              <option value="">Fără team leader</option>
+              {managers.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.first_name} {m.last_name}
+                </option>
+              ))}
+            </select>
+
+            <button type="submit">Creează utilizator</button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

@@ -10,15 +10,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // const login = async (email, password) => {
-  //   try {
-  //     const userData = await loginRequest(email, password);
-  //     setUser(userData);
-  //     navigate("/dashboard");
-  //   } catch (err) {
-  //     alert("Login esuat");
-  //   }
-  // };
   const login = async (email, password) => {
     try {
       const response = await loginRequest(email, password);

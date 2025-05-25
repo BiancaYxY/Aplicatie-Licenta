@@ -79,6 +79,24 @@ const leaveController = {
           res.status(500).json({ message: "Error in setting leave status!" });
         }
       },
+
+      getTeamLeaves: async (req, res) => {
+        try {
+          const managerId = req.user.id;
+          const teamMembers = await User.findAll({ where: { team_lead_id: managerId } });
+          const teamIds = teamMembers.map(member => member.id);
+
+          const leaves = await Leave.findAll({
+            where: { user_id: teamIds },
+            order: [["created_at", "DESC"]],
+          });
+
+          res.status(200).json(leaves);
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ message: "Error loading team leaves!" });
+        }
+      },
 };
 
 module.exports = leaveController;

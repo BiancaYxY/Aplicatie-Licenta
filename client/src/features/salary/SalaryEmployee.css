@@ -1,0 +1,40 @@
+.salary-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.salary-title {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.download-button {
+  display: block;
+  margin: 0 auto 2rem auto;
+  padding: 10px 20px;
+  background-color: #14b8a6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.download-button:hover {
+  background-color: #0d9488;
+}
+
+.salary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.salary-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+}

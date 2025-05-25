@@ -6,7 +6,6 @@ require("dotenv").config();
 
 const { db } = require("./models");
 
-//  Import rutele
 const apiRoutes = require("./routes");
 
 const PORT = process.env.PORT || 1234;

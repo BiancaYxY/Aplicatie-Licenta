@@ -5,7 +5,7 @@ const PDFDocument = require("pdfkit");
 const salaryController = {
     getSalaryDetails: async(req, res) => {
         try {
-            const user_id = req.user_id;
+            const user_id = req.user.id;
             const salaries = await Salary.findAll({
                 where: {user_id},
                 order:[["year", "DESC"], ["month", "DESC"]],
@@ -118,6 +118,17 @@ const salaryController = {
         }
       },
 
+      getAllSalaries: async (req, res) => {
+        try {
+          const salaries = await Salary.findAll({
+            order: [["year", "DESC"], ["month", "DESC"]],
+          });
+          res.status(200).json(salaries);
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: "Error fetching all salaries" });
+        }
+      },
 }
 
 module.exports = salaryController;

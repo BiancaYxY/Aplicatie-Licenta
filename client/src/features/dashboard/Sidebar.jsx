@@ -20,6 +20,26 @@ const Sidebar = () => {
     else navigate("/unauthorized");
   };
 
+    const goToLeave = () => {
+    if (!user) return;
+    if (user.rank === "employee") navigate("/leave");
+    else if (user.rank === "manager") navigate("/manager/leave");
+    else navigate("/unauthorized");
+  };
+
+    const goToSalary = () => {
+      if (!user) return;
+      if (user.rank === "employee") navigate("/salary");
+      else if (user.rank === "manager") navigate("/manager/salary");
+      else navigate("/unauthorized");
+  };
+
+    const goToTeam = () => {
+      if (!user) return;
+      if (user.rank === "manager") navigate("/manager/team");
+      else navigate("/unauthorized");
+  };
+
   return (
     <div className="sidebar">
       <Link to="/dashboard">
@@ -27,10 +47,33 @@ const Sidebar = () => {
       </Link>
       <ul>
         <li><Link to="/dashboard">Dashboard</Link></li>
-        <li><Link to="/profile">Profil</Link></li>
-        <li><button className="sidebar-link" onClick={goToFeedback}>Feedback</button></li>
-        <li><button className="sidebar-link" onClick={goToTasks}>Taskuri</button></li>
-        <li><Link to="#">Setări</Link></li>
+        {user?.rank === "employee" && (
+          <>
+            <li><Link to="/profile">Profil</Link></li>
+            <li><button className="sidebar-link" onClick={goToFeedback}>Feedback</button></li>
+            <li><button className="sidebar-link" onClick={goToTasks}>Taskuri</button></li>
+            <li><button className="sidebar-link" onClick={goToLeave}>Concedii</button></li>
+            <li><button className="sidebar-link" onClick={goToSalary}>Salarii</button></li>
+          </>
+        )}
+
+        {user?.rank === "manager" && (
+          <>
+            <li><Link to="/profile">Profil</Link></li>
+            <li><button className="sidebar-link" onClick={goToFeedback}>Feedback</button></li>
+            <li><button className="sidebar-link" onClick={goToTasks}>Taskuri</button></li>
+            <li><button className="sidebar-link" onClick={goToLeave}>Concedii</button></li>
+            <li><button className="sidebar-link" onClick={goToSalary}>Salarii</button></li>
+            <li><button className="sidebar-link" onClick={goToTeam}>Echipa Mea</button></li>
+          </>
+        )}
+
+        {user?.rank === "admin" && (
+          <>
+            <li><Link to="/admin/announcements">Anunțuri</Link></li>
+            <li><Link to="/admin/create-user">Creare Utilizator</Link></li>
+          </>
+        )}
       </ul>
     </div>
   );

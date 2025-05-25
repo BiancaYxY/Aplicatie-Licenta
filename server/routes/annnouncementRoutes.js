@@ -5,7 +5,7 @@ const authenticateUser = require("../middleware/authMiddleware");
 const authRankMiddleware = require("../middleware/authRankMiddleware")
 
 router.get("/", authenticateUser, announcementController.getAnnouncements);
-router.post("/create", authenticateUser, authRankMiddleware("manager"), announcementController.postAnnouncement);
+router.post("/create", authenticateUser, authRankMiddleware("admin"), announcementController.postAnnouncement);
 router.delete("/delete/:announcementId", authenticateUser, authRankMiddleware("admin"), announcementController.deleteAnnouncement);
 
 module.exports = router;

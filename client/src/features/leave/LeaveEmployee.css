@@ -1,0 +1,74 @@
+.leave-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.leave-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.leave-form-box {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.leave-form-box label {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.leave-form-box input {
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.submit-button {
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 1rem;
+  background-color: #14b8a6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.submit-button:hover {
+  background-color: #0d9488;
+}
+
+.leave-message {
+  margin-top: 10px;
+  font-weight: 500;
+  color: green;
+}
+
+.leave-list {
+  margin-top: 2rem;
+}
+
+.leave-list h2 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.leave-card {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1rem;
+}
