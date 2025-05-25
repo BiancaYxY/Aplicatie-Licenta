@@ -27,10 +27,7 @@ Aplicația este o platformă completă de HR Management pentru companii, destina
 
 ### Admini
 - Adăugare și modificare utilizatori
-- Setare și actualizare salarii + bonusuri
 - Postare anunțuri generale
-- Monitorizare performanță generală a angajaților
-- Acces complet la toate funcțiile aplicației
 
 ---
 
