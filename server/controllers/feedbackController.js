@@ -26,7 +26,7 @@ const feedbackController = {
                 id: uuidv4(),
                 user_id,
                 target_id,
-                feedback_for,
+                feedback_for: "manager",
                 team_dynamics,
                 coaching,
                 communication,
@@ -71,17 +71,17 @@ const feedbackController = {
         }
       },
 
-      generateNPSReport: async (req, res) => {
+     generateNPSReport: async (req, res) => {
         try {
           const managerId = req.user.id;
-      
+
           const teamMembers = await User.findAll({
             where: { team_lead_id: managerId, rank: "employee" },
             attributes: ["id"],
           });
-      
+
           const teamMemberIds = teamMembers.map(user => user.id);
-      
+
           const feedbacks = await Feedback.findAll({
             where: {
               target_id: managerId,
@@ -89,36 +89,37 @@ const feedbackController = {
               feedback_for: "manager",
             },
           });
-      
+
           if (feedbacks.length === 0) {
             return res.status(404).json({ message: "No feedback found for report!" });
           }
-      
+
           const categories = ["team_dynamics", "coaching", "communication", "decision_making", "motivation"];
           const results = {};
-      
+
           for (const category of categories) {
             let sum = 0;
             let promoters = 0;
             let detractors = 0;
-      
+
             for (const feedback of feedbacks) {
               const score = feedback[category];
               sum += score;
-      
-              if (score >= 8) promoters++;
-              else if (score < 7) detractors++;
+
+              if (score > 8) promoters++;
+              else if (score <= 7) detractors++;
             }
-      
+
             const avg = sum / feedbacks.length;
-            const nps = ((promoters - detractors) / feedbacks.length) * 100;
-      
+            const npsRaw = ((promoters - detractors) / feedbacks.length) * 100;
+            const scaledNps = ((npsRaw + 100) / 200) * 9 + 1;
+
             results[category] = {
               average: avg.toFixed(2),
-              nps: `${nps.toFixed(0)}%`
+              nps: scaledNps.toFixed(2) // NPS ca notă de la 1 la 10
             };
           }
-      
+
           res.status(200).json({
             total_feedbacks: feedbacks.length,
             report: results,
@@ -128,7 +129,6 @@ const feedbackController = {
           res.status(500).json({ message: "Error in generating NPS report!" });
         }
       },
-
       summarizeFeedback: async (req, res) => {
         try {
       
@@ -160,7 +160,8 @@ const feedbackController = {
               - Comentariu: ${fb.written_feedback || "–"}`;
             });
       
-          const prompt = `Analizeaza urmatoarele evaluari oferite unui manager si genereaza un rezumat clar cu punctele forte si aspectele de imbunatatit:\n\n${feedbackText}`;
+          const prompt = `Analizeaza urmatoarele evaluari oferite unui manager si genereaza un 
+          rezumat clar cu punctele forte si aspectele de imbunatatit:\n\n${feedbackText}`;
       
           const completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",

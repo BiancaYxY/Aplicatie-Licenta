@@ -20,11 +20,12 @@ const salaryController = {
 
     downloadPayslip: async(req, res) => {
         try {
-            const user = req.user;
-            const user_id = user.id;
+            const user_id = req.user.id;
 
-            if(!user) {
-                return res.status(404).json({message:"User not found!"});
+            const user = await User.findByPk(user_id);
+
+            if (!user) {
+                return res.status(404).json({ message: "User not found!" });
             }
 
             const salary = await Salary.findOne({
@@ -42,21 +43,87 @@ const salaryController = {
                 `attachment; filename=payslip_${salary.month}_${salary.year}.pdf`
             );
 
-            const doc = new PDFDocument();
+            const doc = new PDFDocument({ margin: 50 });
             doc.pipe(res);
-            doc.fontSize(20).text('Fisa de Salariu', { align: 'center' });
-            doc.moveDown();
-      
-            doc.fontSize(12).text(`Nume: ${user.first_name} ${user.last_name}`);
-            doc.text(`Email: ${user.email}`);
-            doc.text(`Luna: ${salary.month}`);
-            doc.text(`An: ${salary.year}`);
-            doc.moveDown();
-      
-            doc.text(`Salariu de baza: ${salary.base_salary} RON`);
-            doc.text(`Bonus: ${salary.bonus} RON`);
-            doc.text(`Total: ${parseFloat(salary.base_salary) + parseFloat(salary.bonus)} RON`);
-      
+
+            doc
+              .fontSize(22)
+              .fillColor("#0cb9c1")
+              .text("Fisa de Salariu", { align: "center" })
+              .moveDown(1);
+
+            doc
+              .moveTo(50, doc.y)
+              .lineTo(550, doc.y)
+              .strokeColor("#cccccc")
+              .stroke()
+              .moveDown(1);
+
+            doc
+              .fontSize(12)
+              .fillColor("black")
+              .text(`Nume: `, { continued: true })
+              .font("Helvetica-Bold")
+              .text(`${user.first_name} ${user.last_name}`);
+
+            doc
+              .font("Helvetica")
+              .text(`Email: `, { continued: true })
+              .font("Helvetica-Bold")
+              .text(`${user.email}`);
+
+            doc
+              .font("Helvetica")
+              .text(`Luna: `, { continued: true })
+              .font("Helvetica-Bold")
+              .text(`${salary.month}`);
+
+            doc
+              .font("Helvetica")
+              .text(`An: `, { continued: true })
+              .font("Helvetica-Bold")
+              .text(`${salary.year}`)
+              .moveDown(1);
+
+            doc
+              .moveTo(50, doc.y)
+              .lineTo(550, doc.y)
+              .strokeColor("#cccccc")
+              .stroke()
+              .moveDown(1);
+
+            doc
+              .font("Helvetica")
+              .text(`Salariu de baza: `, { continued: true })
+              .font("Helvetica-Bold")
+              .text(`${salary.base_salary} RON`);
+
+            doc
+              .font("Helvetica")
+              .text(`Bonus: `, { continued: true })
+              .font("Helvetica-Bold")
+              .text(`${salary.bonus} RON`);
+
+            doc
+              .font("Helvetica")
+              .fillColor("#000")
+              .text(`Total: `, { continued: true })
+              .font("Helvetica-Bold")
+              .fillColor("#0cb9c1")
+              .text(
+                `${parseFloat(salary.base_salary) + parseFloat(salary.bonus)} RON`
+              );
+            
+            const path = require("path");
+            const centerX = (doc.page.width - 80) / 2;
+
+            try {
+              const logoPath = path.join(__dirname, "..", "logo_hr_app.png");
+              doc.moveDown(2);
+              doc.image(logoPath, centerX, doc.y, { width: 80 });
+            } catch (imgErr) {
+              console.warn("Eroare la încărcarea logo-ului în PDF:", imgErr.message);
+            }
             doc.end();
         } catch(err) {
             console.error("Error in generating payslip pdf", err);
