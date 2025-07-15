@@ -2,28 +2,45 @@ const {Leave, User} = require("../models");
 const { v4: uuidv4 } = require("uuid");
 
 const leaveController = {
-    requestLeave: async(req, res) => {
+      requestLeave: async (req, res) => {
         try {
-            const {
-                start_date,
-                end_date
-                } = req.body;
-            
-            const user_id = req.user.id;
-            const leave = await Leave.create({
-                id: uuidv4(),
-                user_id,
-                start_date,
-                end_date,
-                status:"pending",
-                created_at: new Date(),
-            });
+          const { start_date, end_date } = req.body;
 
-            res.status(201).json({message: "Leave request sent succesfully!", leave});
+          const user_id = req.user.id;
 
-        } catch(err) {
-            console.error(err);
-            res.status(500).json({message:"Error in sending leave request!"});
+          if (!start_date || !end_date) {
+            return res.status(400).json({ message: "Start date and end date are required." });
+          }
+
+          const start = new Date(start_date);
+          const end = new Date(end_date);
+          const today = new Date();
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+          tomorrow.setHours(0, 0, 0, 0);
+
+          if (start < tomorrow) {
+            return res.status(400).json({ message: "Start date must be at least from tomorrow." });
+          }
+
+          if (end < start) {
+            return res.status(400).json({ message: "End date cannot be before start date." });
+          }
+
+          const leave = await Leave.create({
+            id: uuidv4(),
+            user_id,
+            start_date,
+            end_date,
+            status: "pending",
+            created_at: new Date(),
+          });
+
+          res.status(201).json({ message: "Leave request sent successfully!", leave });
+
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ message: "Error in sending leave request!" });
         }
     },
 

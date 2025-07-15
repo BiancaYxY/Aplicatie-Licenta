@@ -141,6 +141,14 @@ const salaryController = {
             month: req.body.month,
             year: req.body.year,
           };
+
+          const { base_salary, bonus, month, year } = req.body;
+
+          if (base_salary < 4050 || bonus < 0) {
+            return res.status(400).json({
+              message: "Salariul de bază și bonusul nu pot fi valori negative!",
+            });
+          }
       
           const salary = await Salary.findByPk(salaryId);
       
@@ -161,41 +169,59 @@ const salaryController = {
       },
 
       setSalary: async (req, res) => {
-        try {
-          const { user_id, base_salary, bonus, month, year } = req.body;
-    
-          const existing = await Salary.findOne({ where: { user_id, month, year } });
-          if (existing) {
-            return res.status(400).json({ message: "Salary for this month already exists!" });
-          }
-    
-          const salary = await Salary.create({
-            id: uuidv4(),
-            user_id,
-            base_salary,
-            bonus,
-            month,
-            year
-          });
-    
-          res.status(201).json({ message: "Salary updated succesfully!", salary });
-        } catch (error) {
-          console.error(error);
-          res.status(500).json({ message: "Error in adding salary!" });
-        }
-      },
+  try {
+    const { user_id, base_salary, bonus, month, year } = req.body;
 
+    const validMonths = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    if (!validMonths.includes(month)) {
+      return res.status(400).json({ message: "Lună invalidă!" });
+    }
+
+    if (Number(base_salary) < 4050 || Number(bonus) < 0) {
+      return res.status(400).json({
+        message: "Salariul de bază și bonusul nu pot fi valori negative!",
+      });
+    }
+
+    const existing = await Salary.findOne({
+      where: { user_id, month, year }
+    });
+
+    if (existing) {
+      return res.status(400).json({ message: "Salariul pentru această lună există deja!" });
+    }
+
+    const salary = await Salary.create({
+      id: uuidv4(),
+      user_id,
+      base_salary,
+      bonus,
+      month,
+      year
+    });
+
+    res.status(201).json({ message: "Salariul a fost adăugat cu succes!", salary });
+  } catch (error) {
+    console.error("Eroare în setSalary:", error);
+    res.status(500).json({ message: "Eroare internă la adăugarea salariului!" });
+  }
+},
       getAllSalaries: async (req, res) => {
         try {
-          const salaries = await Salary.findAll({
-            order: [["year", "DESC"], ["month", "DESC"]],
-          });
-          res.status(200).json(salaries);
+            const salaries = await Salary.findAll({
+                order: [["year", "DESC"], ["month", "DESC"]],
+            });
+            res.status(200).json(salaries);
         } catch (error) {
-          console.error(error);
-          res.status(500).json({ message: "Error fetching all salaries" });
+            console.error(error);
+            res.status(500).json({ message: "Error fetching all salaries" });
         }
-      },
-}
+    }
+    };
+  
 
 module.exports = salaryController;

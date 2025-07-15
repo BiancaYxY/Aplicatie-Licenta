@@ -76,6 +76,12 @@ const SalaryManager = () => {
         ...formData,
         month: lunaMap[formData.month],
       };
+     
+      if (Number(payload.base_salary) < 4050 || Number(payload.bonus) < 0) {
+        setMessage("Salariul de bază și bonusul nu pot fi negative!");
+        return;
+      }
+
       await setSalary(payload);
       setMessage("Salariul a fost adăugat cu succes.");
     } catch (err) {
@@ -88,6 +94,11 @@ const SalaryManager = () => {
     try {
       const { user_id, month, year, base_salary, bonus } = updateData;
       const monthEN = lunaMap[month];
+
+      if (Number(base_salary) < 4050 || Number(bonus) < 0) {
+        setMessage("Salariul de bază și bonusul nu pot fi negative!");
+        return;
+      }
 
       const allSalaries = await fetchAllSalaries();
 
@@ -116,62 +127,108 @@ const SalaryManager = () => {
     }
   };
 
-  return (
-    <div className="dashboard-container">
-      <Sidebar />
-      <div className="main-content">
-        <Navbar />
-        <div className="salary-manager-wrapper">
-          <h1 className="salary-title">Administrare Salarii</h1>
-          {message && <p className="salary-message">{message}</p>}
+ return (
+  <div className="dashboard-container">
+    <Sidebar />
+    <div className="main-content">
+      <Navbar />
+      <div className="salary-manager-wrapper">
+        <h1 className="salary-title">Administrare Salarii</h1>
+        {message && <p className="salary-message">{message}</p>}
 
-          <form className="salary-form" onSubmit={handleSubmit}>
-            <h2>Adaugă Salariu</h2>
-            <select name="user_id" onChange={handleChange} required>
-              <option value="">Selectează angajat</option>
-              {users.map(user => (
-                <option key={user.id} value={user.id}>
-                  {user.first_name} {user.last_name}
-                </option>
-              ))}
-            </select>
-            <input name="base_salary" type="number" placeholder="Salariu de bază" onChange={handleChange} required />
-            <input name="bonus" type="number" placeholder="Bonus" onChange={handleChange} required />
-            <select
-              name="month"
-              value={updateData.month}
-              onChange={(e) => handleChange(e, true)}
-            >
-              {luni.map(m => (
-                <option key={m} value={m}>{m}</option>
-              ))}
-            </select>
-            <input name="year" type="number" value={formData.year} onChange={handleChange} required />
-            <button type="submit">Adaugă</button>
-          </form>
+        {/* FORMULAR ADAUGARE SALARIU */}
+        <form className="salary-form" onSubmit={handleSubmit}>
+          <h2>Adaugă Salariu</h2>
+          <select name="user_id" value={formData.user_id} onChange={handleChange} required>
+            <option value="">Selectează angajat</option>
+            {users.map(user => (
+              <option key={user.id} value={user.id}>
+                {user.first_name} {user.last_name}
+              </option>
+            ))}
+          </select>
+          <input
+            name="base_salary"
+            type="number"
+            placeholder="Salariu de bază (minim 4050 lei)"
+            value={formData.base_salary}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="bonus"
+            type="number"
+            placeholder="Bonus"
+            value={formData.bonus}
+            onChange={handleChange}
+            required
+          />
+          <select
+            name="month"
+            value={formData.month}
+            onChange={handleChange}
+          >
+            {luni.map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <input
+            name="year"
+            type="number"
+            value={formData.year}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Adaugă</button>
+        </form>
 
-          <form className="salary-form" onSubmit={handleUpdate}>
-            <h2>Actualizează Salariu</h2>
-            <select name="user_id" onChange={(e) => handleChange(e, true)} required>
-              <option value="">Selectează angajat</option>
-              {users.map(user => (
-                <option key={user.id} value={user.id}>
-                  {user.first_name} {user.last_name}
-                </option>
-              ))}
-            </select>
-            <input name="base_salary" type="number" placeholder="Salariu de bază" onChange={(e) => handleChange(e, true)} required />
-            <input name="bonus" type="number" placeholder="Bonus" onChange={(e) => handleChange(e, true)} required />
-            <select name="month" onChange={(e) => handleChange(e, true)}>
-              {luni.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-            <input name="year" type="number" value={updateData.year} onChange={(e) => handleChange(e, true)} required />
-            <button type="submit">Actualizează</button>
-          </form>
-        </div>
+        {/* FORMULAR ACTUALIZARE SALARIU */}
+        <form className="salary-form" onSubmit={handleUpdate}>
+          <h2>Actualizează Salariu</h2>
+          <select name="user_id" value={updateData.user_id} onChange={(e) => handleChange(e, true)} required>
+            <option value="">Selectează angajat</option>
+            {users.map(user => (
+              <option key={user.id} value={user.id}>
+                {user.first_name} {user.last_name}
+              </option>
+            ))}
+          </select>
+          <input
+            name="base_salary"
+            type="number"
+            placeholder="Salariu de bază (minim 4050 lei)"
+            value={updateData.base_salary}
+            onChange={(e) => handleChange(e, true)}
+            required
+          />
+          <input
+            name="bonus"
+            type="number"
+            placeholder="Bonus"
+            value={updateData.bonus}
+            onChange={(e) => handleChange(e, true)}
+            required
+          />
+          <select
+            name="month"
+            value={updateData.month}
+            onChange={(e) => handleChange(e, true)}
+          >
+            {luni.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+          <input
+            name="year"
+            type="number"
+            value={updateData.year}
+            onChange={(e) => handleChange(e, true)}
+            required
+          />
+          <button type="submit">Actualizează</button>
+        </form>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default SalaryManager;

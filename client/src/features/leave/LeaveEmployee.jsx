@@ -7,6 +7,13 @@ import "./LeaveEmployee.css";
 
 const LeaveEmployee = () => {
   const { user } = useAuth();
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0]; // format YYYY-MM-DD
+  };
+
+const minStartDate = getTomorrowDate();
   const [leaves, setLeaves] = useState([]);
   const [formData, setFormData] = useState({
     start_date: "",
@@ -29,6 +36,19 @@ const LeaveEmployee = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const { start_date, end_date } = formData;
+
+    if (start_date < minStartDate) {
+      setMessage("Data de început trebuie să fie cel puțin de mâine.");
+      return;
+    }
+
+    if (end_date < start_date) {
+      setMessage("Data de sfârșit nu poate fi înaintea datei de început.");
+      return;
+    }
+
     try {
       await requestLeave(formData);
       setMessage("Cererea de concediu a fost trimisă cu succes!");
@@ -53,6 +73,7 @@ const LeaveEmployee = () => {
               name="start_date"
               value={formData.start_date}
               onChange={handleChange}
+              min={minStartDate}
               required
             />
 
@@ -62,6 +83,7 @@ const LeaveEmployee = () => {
               name="end_date"
               value={formData.end_date}
               onChange={handleChange}
+              min={formData.start_date || minStartDate}
               required
             />
 

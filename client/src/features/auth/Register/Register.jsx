@@ -24,7 +24,7 @@ const Register = () => {
         const data = await getManagers();
         setManagers(data);
       } catch (err) {
-        console.error("Eroare la încărcarea managerilor", err);
+        console.error("Eroare la incarcarea managerilor", err);
       }
     };
 
@@ -63,7 +63,11 @@ const Register = () => {
 
       navigate("/");
     } catch (err) {
-      setError("Eroare la înregistrare.");
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Eroare la înregistrare.");
+      }
     }
   };
 

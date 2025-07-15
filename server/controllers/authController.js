@@ -16,7 +16,10 @@ const authController = {
             rank,
             team_lead_id,
         } = req.body;
-
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        if (!emailRegex.test(email)) {
+          return res.status(400).json({ message: "Email invalid!" });
+        }
       const checkUser = await userModel.findOne({ where: { email } });
       if (checkUser) {
             return res.status(400).send("User already exists!");
